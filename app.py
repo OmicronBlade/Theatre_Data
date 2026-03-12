@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date, datetime, timedelta
+import csv
+from io import StringIO
+from flask import Response
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///theatre_data.db"
@@ -184,6 +187,65 @@ def complete_day(d):
     db.session.commit()
     flash(f"All theatres marked complete for {dt}", "success")
     return redirect(url_for("dashboard"))
+
+@app.route("/export_csv")
+def export_csv():
+
+    records = Record.query.order_by(Record.thedate, Record.theatre).all()
+
+    output = StringIO()
+    writer = csv.writer(output)
+
+    header = [
+        "date","theatre","list_type",
+        "start_anaesthetic_time","start_surgical_prep_time",
+
+        "case1_out",
+
+        "case2_in","case2_reason","case2_notes","case2_out",
+        "case3_in","case3_reason","case3_notes","case3_out",
+        "case4_in","case4_reason","case4_notes","case4_out",
+        "case5_in","case5_reason","case5_notes","case5_out",
+        "case6_in","case6_reason","case6_notes","case6_out",
+
+        "record_complete"
+    ]
+
+    writer.writerow(header)
+
+    for r in records:
+
+        writer.writerow([
+            r.thedate,
+            r.theatre,
+            r.list_type,
+
+            r.start_anaesthetic_time,
+            r.start_surgical_prep_time,
+            r.case1_in_reason,
+            r.case1_in_notes,
+            r.case1_out,
+            r.case1_in_reason,
+
+            r.case2_in, r.case2_in_reason, r.case2_in_notes, r.case2_out,
+            r.case3_in, r.case3_in_reason, r.case3_in_notes, r.case3_out,
+            r.case4_in, r.case4_in_reason, r.case4_in_notes, r.case4_out,
+            r.case5_in, r.case5_in_reason, r.case5_in_notes, r.case5_out,
+            r.case6_in, r.case6_in_reason, r.case6_in_notes, r.case6_out,
+
+            r.record_complete
+        ])
+
+    response = Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={
+            "Content-Disposition":
+            "attachment; filename=theatre_data_feb_2026.csv"
+        }
+    )
+
+    return response
 
 if __name__ == "__main__":
     app.run(debug=True)
