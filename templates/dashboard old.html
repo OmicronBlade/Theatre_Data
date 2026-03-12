@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3 class="mb-4">Operating Theatre Dashboard</h3>
+
+<div class="row g-3">
+
+    {% for d in days %}
+        <div class="col-lg-2 col-md-3 col-6">
+            <a href="/day/{{d.date}}" class="text-decoration-none">
+                <div class="card shadow-sm">
+                    <div class="card-header text-center">
+                        <strong>{{d.date.day}}</strong>
+                    </div>
+                    <div class="card-body text-center">
+                            {% for t in ["A","B","C"] %}
+                            {% if d.status.get(t) %}
+                            <div class="badge bg-success w-100 mb-1">Theatre {{t}}</div>
+                            {% else %}
+                            <div class="badge bg-danger w-100 mb-1">Theatre {{t}}</div>
+                            {% endif %}
+                            {% endfor %}
+
+                    </div>
+                    <div class="card-footer text-center">
+                        {{d.completion}} / 3 complete
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

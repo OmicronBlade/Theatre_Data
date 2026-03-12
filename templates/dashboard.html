@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    .row-cols-7 > * {
+        flex: 0 0 auto;
+        width: calc(100% / 7);
+    }
+</style>
+
+<div class="row g-3 row-cols-7">
+    {% for d in days %}
+    <div class="col">
+        <a href="/day/{{d.date}}" class="text-decoration-none">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>{{d.date.day}}</h5>
+                    {% for theatre in ["A","B","C"] %}
+                        {% if d.weekend %}
+                            {% if d.status.get(theatre) %}
+                                <span class="badge bg-success">{{theatre}}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{theatre}}</span>
+                            {% endif %}
+                        {% else %}
+                            {% if d.status.get(theatre) %}
+                                <span class="badge bg-success">{{theatre}}</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{theatre}}</span>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

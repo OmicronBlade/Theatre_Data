@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Edit Theatre {{r.theatre}} — {{r.thedate}}</h3>
+
+<form method="post">
+    <div class="mb-3">
+        <label>List Type</label>
+        <select name="list_type" class="form-select">
+            <option value="Full">Full Day</option>
+            <option value="Half">Half Day</option>
+            <option value="No list">No list</option>
+        </select>
+    </div>
+    <hr>
+    <h4>Case Flow</h4>
+    <div class="row">
+        <div class="col">
+            <label>Anaesthetic Start</label>
+            <input type="time" name="start_anaesthetic_time" class="form-control">
+        </div>
+        <div class="col">
+            <label>Surgical Prep Start</label>
+            <input type="time" name="start_surgical_prep_time" class="form-control">
+        </div>
+        <div class="col">
+            <label>Reason if >15 min delay</label>
+            <select name="case1_in_reason" class="form-select">
+                <option></option>
+                <option>Anaesthesia</option>
+                <option>Surgical</option>
+                <option>Nursing</option>
+                <option>Porters</option>
+                <option>Equipment</option>
+                <option>Other</option>
+            </select>
+        </div>
+        <div class="mb-3 mt-2">
+            <textarea name="case1_in_notes" class="form-control" placeholder="Notes"></textarea>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Case 1 Wheels Out</label>
+        <input type="time" name="case1_out" class="form-control">
+    </div>
+    {% for c in range(2,7) %}
+    <hr>
+    <h5>Case {{c}}</h5>
+    <div class="row">
+        <div class="col">
+            <label>Wheels In</label>
+            <input type="time" name="case{{c}}_in" class="form-control">
+            <label>Wheels Out</label>
+            <input type="time" name="case{{c}}_out" class="form-control">
+        </div>
+        <div class="col">
+            <label>Reason if >15 min delay</label>
+            <select name="case{{c}}_reason" class="form-select">
+                <option></option>
+                <option>Anaesthesia</option>
+                <option>Surgical</option>
+                <option>Nursing</option>
+                <option>Porters</option>
+                <option>Equipment</option>
+                <option>Other</option>
+            </select>
+        </div>
+    </div>
+    <div class="mb-3 mt-2">
+        <textarea name="case{{c}}_notes" class="form-control" placeholder="Notes"></textarea>
+    </div>
+
+    {% endfor %}
+    <div class="form-check">
+        <input type="checkbox" name="record_complete" class="form-check-input">
+        <label class="form-check-label">
+            Record Complete
+        </label>
+    </div>
+    <br>
+    <button class="btn btn-success">Save</button>
+</form>
+<script>
+    function minutes(t){
+        let p=t.split(":")
+        return parseInt(p[0])*60 + parseInt(p[1])
+    }
+    function checkDelay(outId,inId){
+        let out=document.getElementById(outId)
+        let inn=document.getElementById(inId)
+        if(!out.value || !inn.value) return
+        if(minutes(inn.value)-minutes(out.value) > 15){
+            inn.style.border="3px solid red"
+        }
+    }
+
+    function parseTime(t){
+        if(!t) return null;
+        let parts = t.split(":");
+        return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    }
+
+    function validateCaseTimes(){
+        const order = [
+            "start_anaesthetic_time",
+            "start_surgical_prep_time",
+            "case1_out",
+            "case2_in",
+            "case2_out",
+            "case3_in",
+            "case3_out",
+            "case4_in",
+            "case4_out",
+            "case5_in",
+            "case5_out",
+            "case6_in",
+            "case6_out"
+        ];
+        let previous = null;
+
+        for(let i=0;i<order.length;i++){
+            let field = document.getElementsByName(order[i])[0];
+            if(!field) continue;
+            field.classList.remove("is-invalid");
+            let t = parseTime(field.value);
+            if(t!==null){
+                if(previous!==null && t < previous){
+                    field.classList.add("is-invalid");
+                    alert(
+                        "Invalid case timing:\n\n" +
+                        order[i].replaceAll("_"," ").toUpperCase() +
+                        " occurs before previous case step."
+                    );
+                    return false;
+                }
+                previous = t;
+            }
+        }
+        return true;
+    }
+    document.querySelector("form").addEventListener("submit", function(e){
+        if(!validateCaseTimes()){
+            e.preventDefault();
+        }
+    });
+</script>
+{% endblock %}

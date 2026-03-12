@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3>{{date}}</h3>
+<table class="table table-striped">
+    <tr>
+        <th>Theatre</th>
+        <th>List Type</th>
+        <th>Complete</th>
+        <th></th>
+    </tr>
+
+    {% for r in records %}
+    <tr>
+        <td>{{r.theatre}}</td>
+        <td>{{r.list_type}}</td>
+        <td>{{r.record_complete}}</td>
+        <td>
+            <a class="btn btn-primary btn-sm" href="/edit/{{r.id}}">
+                Edit
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+    <form method="POST" action="/complete_day/{{date}}" class="mt-2">
+    <button class="btn btn-success">
+    Mark All Complete
+    </button>
+    <a href="/" class="btn btn-secondary">Back</a>
+{% endblock %}
