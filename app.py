@@ -16,6 +16,7 @@ class Record(db.Model):
     theatre = db.Column(db.String(1))
 
     list_type = db.Column(db.String(10))
+    list_finish = db.Column(db.String(6))
 
     start_anaesthetic_time = db.Column(db.String(5))
     start_surgical_prep_time = db.Column(db.String(5))
@@ -197,7 +198,7 @@ def export_csv():
     writer = csv.writer(output)
 
     header = [
-        "date","theatre","list_type",
+        "date","theatre","list_type", "list_finish",
         "start_anaesthetic_time","start_surgical_prep_time",
 
         "case1_out",
@@ -219,6 +220,7 @@ def export_csv():
             r.thedate,
             r.theatre,
             r.list_type,
+            r.list_finish,
 
             r.start_anaesthetic_time,
             r.start_surgical_prep_time,
