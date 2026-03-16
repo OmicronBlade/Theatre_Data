@@ -6,16 +6,23 @@
     <div class="mb-3">
         <label>List Type</label>
         <select name="list_type" class="form-select">
-            <option value="Full">Full Day</option>
-            <option value="Half">Half Day</option>
-            <option value="No list">No list</option>
+            {% for val, label in [
+                ('Full','Full Day'),
+                ('Half','Half Day'),
+                ('No list','No list')
+            ] %}
+                <option value="{{ val }}" {{ 'selected' if r.list_type == val else '' }}>
+                    {{ label }}
+                </option>
+            {% endfor %}
         </select>
         <label>List Finish</label>
         <select name="list_finish" class="form-select">
-            <option value="12:00">12:00</option>
-            <option value="13:00">13:00</option>
-            <option value="16:00">16:00</option>
-            <option value="17:00">17:00</option>
+            {% for t in ['12:00','13:00','16:00','17:00'] %}
+                <option value="{{ t }}" {{ 'selected' if r.list_finish == t else '' }}>
+                    {{ t }}
+                </option>
+            {% endfor %}
         </select>
     </div>
     <hr>
@@ -23,31 +30,29 @@
     <div class="row">
         <div class="col">
             <label>Anaesthetic Start</label>
-            <input type="time" name="start_anaesthetic_time" class="form-control">
+            <input type="time" name="start_anaesthetic_time" class="form-control" value = {{r.start_anaesthetic_time}}>
         </div>
         <div class="col">
             <label>Surgical Prep Start</label>
-            <input type="time" name="start_surgical_prep_time" class="form-control">
+            <input type="time" name="start_surgical_prep_time" class="form-control" value = {{r.start_surgical_prep_time}}>
         </div>
         <div class="col">
-            <label>Reason if >15 min delay</label>
-            <select name="case1_in_reason" class="form-select">
-                <option></option>
-                <option>Anaesthesia</option>
-                <option>Surgical</option>
-                <option>Nursing</option>
-                <option>Porters</option>
-                <option>Equipment</option>
-                <option>Other</option>
+            <label>Reason if >15-min delay</label>
+            <select name="case1_reason" class="form-select">
+                {% for reason in ['', 'Anaesthesia', 'Surgical', 'Nursing', 'Porters', 'Equipment', 'Other'] %}
+                    <option value="{{ reason }}" {{ 'selected' if r.case1_in_reason == reason else '' }}>
+                        {{ reason }}
+                    </option>
+                {% endfor %}
             </select>
         </div>
         <div class="mb-3 mt-2">
-            <textarea name="case1_in_notes" class="form-control" placeholder="Notes"></textarea>
+            <textarea name="case1_notes" class="form-control" placeholder="Notes">{{r.case1_in_notes}}</textarea>
         </div>
     </div>
     <div class="mb-3">
         <label>Case 1 Wheels Out</label>
-        <input type="time" name="case1_out" class="form-control">
+        <input type="time" name="case1_out" class="form-control" value={{r.case1_out}}>
     </div>
     {% for c in range(2,7) %}
     <hr>
@@ -55,30 +60,30 @@
     <div class="row">
         <div class="col">
             <label>Wheels In</label>
-            <input type="time" name="case{{c}}_in" class="form-control">
+            <input type="time" name="case{{c}}_in" class="form-control" value="{{getattr(r,'case' ~ c ~ '_in')}}">
             <label>Wheels Out</label>
-            <input type="time" name="case{{c}}_out" class="form-control">
+            <input type="time" name="case{{c}}_out" class="form-control" value="{{getattr(r,'case' ~ c ~ '_out')}}">
         </div>
         <div class="col">
-            <label>Reason if >15 min delay</label>
+            <label>Reason if >15-min delay</label>
             <select name="case{{c}}_reason" class="form-select">
-                <option></option>
-                <option>Anaesthesia</option>
-                <option>Surgical</option>
-                <option>Nursing</option>
-                <option>Porters</option>
-                <option>Equipment</option>
-                <option>Other</option>
+                {% for reason in ['', 'Anaesthesia', 'Surgical', 'Nursing', 'Porters', 'Equipment', 'Other'] %}
+                    <option value="{{ reason }}"
+                        {{ 'selected' if getattr(r, 'case' ~ c ~ '_in_reason', '') == reason else '' }}>
+                        {{ reason }}
+                    </option>
+                {% endfor %}
             </select>
         </div>
     </div>
     <div class="mb-3 mt-2">
-        <textarea name="case{{c}}_notes" class="form-control" placeholder="Notes"></textarea>
+        <textarea name="case{{c}}_notes" class="form-control" placeholder="Notes">{{getattr(r,'case' ~ c ~ '_in_notes','')}}</textarea>
     </div>
 
     {% endfor %}
     <div class="form-check">
-        <input type="checkbox" name="record_complete" class="form-check-input">
+        <input type="checkbox" name="record_complete" class="form-check-input"
+            {% if r.record_complete %}checked{% endif %}>
         <label class="form-check-label">
             Record Complete
         </label>

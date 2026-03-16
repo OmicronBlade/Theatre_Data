@@ -8,6 +8,7 @@ from flask import Response
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///theatre_data.db"
 app.config["SECRET_KEY"] = "secret"
+app.jinja_env.globals.update(getattr=getattr)
 db = SQLAlchemy(app)
 
 class Record(db.Model):
@@ -168,10 +169,42 @@ def edit_record(id):
             flash(msg,"danger")
             return redirect(url_for("edit_record",id=id))
         r.list_type = form.get("list_type")
+        r.list_finish = form.get("list_finish")
 
         for field in form:
-            if hasattr(r,field):
-                setattr(r,field,form[field])
+            if hasattr(r, field):
+                print(field+"#"+form[field])
+
+        r.start_anaesthetic_time = form.get("start_anaesthetic_time") or None
+        r.start_surgical_prep_time = form.get("start_surgical_prep_time") or None
+        r.case1_in_notes = form.get("case1_notes")
+        r.case1_in_reason = form.get("case1_reason")
+        r.case1_out = form.get("case1_out") or None
+
+        r.case2_in = form.get("case2_in") or None
+        r.case2_in_reason = form.get("case2_reason")
+        r.case2_in_notes = form.get("case2_notes")
+        r.case2_out = form.get("case2_out") or None
+
+        r.case3_in = form.get("case3_in") or None
+        r.case3_in_reason = form.get("case3_reason")
+        r.case3_in_notes = form.get("case3_notes")
+        r.case3_out = form.get("case3_out") or None
+
+        r.case4_in = form.get("case4_in") or None
+        r.case4_in_reason = form.get("case4_reason")
+        r.case4_in_notes = form.get("case4_notes")
+        r.case4_out = form.get("case4_out") or None
+
+        r.case5_in = form.get("case5_in") or None
+        r.case5_in_reason = form.get("case5_reason")
+        r.case5_in_notes = form.get("case5_notes")
+        r.case5_out = form.get("case5_out") or None
+
+        r.case6_in = form.get("case6_in") or None
+        r.case6_in_reason = form.get("case6_reason")
+        r.case6_in_notes = form.get("case6_notes")
+        r.case6_out = form.get("case6_out") or None
 
         r.record_complete = True if form.get("record_complete") else False
         db.session.commit()
