@@ -234,7 +234,7 @@ def export_csv():
         "date","theatre","list_type", "list_finish",
         "start_anaesthetic_time","start_surgical_prep_time",
 
-        "case1_out",
+        "case1_reason","case1_notes","case1_out",
 
         "case2_in","case2_reason","case2_notes","case2_out",
         "case3_in","case3_reason","case3_notes","case3_out",
@@ -260,7 +260,6 @@ def export_csv():
             r.case1_in_reason,
             r.case1_in_notes,
             r.case1_out,
-            r.case1_in_reason,
 
             r.case2_in, r.case2_in_reason, r.case2_in_notes, r.case2_out,
             r.case3_in, r.case3_in_reason, r.case3_in_notes, r.case3_out,

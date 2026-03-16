@@ -9,7 +9,8 @@
             {% for val, label in [
                 ('Full','Full Day'),
                 ('Half','Half Day'),
-                ('No list','No list')
+                ('No list','No list'),
+                ('Missing','Missing')
             ] %}
                 <option value="{{ val }}" {{ 'selected' if r.list_type == val else '' }}>
                     {{ label }}
