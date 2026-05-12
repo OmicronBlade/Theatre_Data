@@ -113,9 +113,9 @@ def is_weekend(d):
 
 @app.route("/")
 def dashboard():
-    start = date(2026, 2, 1)
+    start = date(2026, 5, 1)
     days = []
-    for i in range(28):
+    for i in range(31):
         d = start + timedelta(days=i)
         records = Record.query.filter_by(thedate=d).all()
         theatre_status = {}
