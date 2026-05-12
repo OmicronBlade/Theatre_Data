@@ -102,8 +102,11 @@ def seed_february():
 
 @app.before_request
 def setup():
-    db.create_all()
-    seed_february()
+    db.create_all()  # Safe to call always — it won't recreate existing tables
+
+    # Only seed if the database is empty
+    if not db.session.query(Record).first():
+        seed_february()
 
 def is_weekend(d):
     return d.weekday() >= 5
